@@ -4,7 +4,7 @@ const layer=document.createElement('canvas');layer.width=W;layer.height=H;const 
 let selected=0,minutes=600,follow=false,zoom=1,hover=null,focused=null,debug=false,ready=false,last=0,scrubTimer,toastTimer;
 const furnitureState={fridge:false,tv:false,wardrobe:false,lamp:null};
 const pets=[{id:'ruirui',name:'蕊蕊',node:'lounge',speed:7.5,bed:'bed1',hello:'嗯？陪我坐一会儿吧。'},{id:'jiojio',name:'jiojio',node:'playLeft',speed:9,bed:'bed2',hello:'你来啦，一起玩！'},{id:'fenfen',name:'粪粪',node:'desk',speed:6,bed:'bed3',hello:'……你好呀。'}].map(p=>({...p,p:[...SCENE.nodes[p.node]],route:[],segment:null,pending:null,manual:false,state:'安静待着',activity:'idle',bubble:'',until:0,goal:null}));
-const images={};const load=(id,url)=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[id]=im;resolve()};im.onerror=()=>reject(new Error(url));im.src=url});
+const images={};const load=(id,url)=>new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{images[id]=im;resolve()};im.onerror=()=>reject(new Error(url));im.src=url+(url.includes('?')?'&':'?')+'v=7'});
 function toast(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2600)}
 function talk(p,t){p.bubble=t;p.until=performance.now()+2700}
 function react(p){p.reactionUntil=performance.now()+1800;talk(p,({ruirui:'布丁晃一晃～',jiojio:'嗨！',fenfen:'……'}[p.id]||'你好呀'))}
@@ -83,5 +83,5 @@ try{const s=JSON.parse(localStorage.getItem('scene-studio-v1')||'null');if(s){if
 // The house and idle characters are required for first paint. Walking, furniture,
 // and reaction GIFs load afterward so a delayed optional file never traps a phone
 // on the loading screen.
-Promise.all([load('house','assets/house.png'),...pets.map(p=>load(p.id,'assets/'+p.id+'-idle.png'))]).then(()=>{prepareBackdrop();ready=true;$('#loading').remove();setTime(minutes,false);roster();requestAnimationFrame(draw);load('walkAtlas','assets/walk-atlas-revised.png').catch(()=>{});load('fridgeOpen','assets/fridge-open.png').catch(()=>{});pets.forEach(p=>load(p.id+'Reaction',p.id+'.gif').catch(()=>{}))}).catch(e=>{$('#loading').textContent='小屋主场景读取失败，请检查 assets/house.png 和三只角色图片。';console.error(e)});
+Promise.all([load('house','assets/house.png'),...pets.map(p=>load(p.id,'assets/'+p.id+'-idle.png'))]).then(()=>{prepareBackdrop();ready=true;$('#loading').remove();setTime(minutes,false);roster();requestAnimationFrame(draw);load('walkAtlas','assets/walk-atlas-revised.png').catch(()=>{});load('fridgeOpen','assets/fridge-open.png').catch(()=>{});pets.forEach(p=>load(p.id+'Reaction',p.id+'.gif').catch(()=>{}))}).catch(e=>{$('#loading').textContent='主场景素材未找到：'+e.message;console.error(e)});
 window.sceneStudio={pets,nav,data:SCENE,furnitureState,setTime,interact,requestMove,get minutes(){return minutes},get ready(){return ready}};
