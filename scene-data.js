@@ -1,0 +1,87 @@
+// Coordinates are percentages of the source scene. Floor 0 = downstairs, 1 = upstairs.
+const SCENE = {
+ nodes: {
+  lounge:[41,65,0], loungeBack:[44,59,0], mic:[46,62,0], sofa:[36,57.5,0], tv:[23,61,0],
+  loungeBottom:[33,69,0], loungeLeft:[18,68,0], coffeeFront:[30,66,0],
+  junction:[48,63,0], kitchenEntry:[48,80,0], kitchenDoor:[51,79,0], kitchenPass:[55,78,0], fridge:[47,77,0], counter:[33,76,0], counterPass:[39,75,0],
+  diningLeft:[31,83,0], diningFront:[38,88,0], diningRight:[46,85,0],
+  hall:[55,63,0], stairFoot:[63,65,0], playEntry:[62,74,0], toys:[60,76,0],
+  playLeft:[64,82,0], playFront:[70,84,0], playRight:[77,80,0],
+  entryPass:[78,69,0], entrance:[84,66,0], lamp:[14,63,0],
+  stairLow:[67,59,0], stairMid:[71,53,0], stairHigh:[75,47,1], landing:[78,42,1],
+  workFront:[71,39,1], workLeft:[64,36,1], desk:[59,33,1], shelf:[68,30,1],
+  dressEntry:[80,39,1], mirror:[86,37,1], wardrobe:[82,32,1],
+  upperHall:[56,32,1], balconyEntry:[50,37,1], balcony:[54,40,1],
+  corridor3:[49,30,1], corridor2:[40,36,1], corridor1:[28,44,1],
+  door1:[27,40,1], room1:[24,38,1], bed1:[19,36,1],
+  door2:[39,32,1], room2:[36,30,1], bed2:[32,27,1],
+  door3:[51,25,1], room3:[47,24,1], bed3:[43,20,1],
+  bathEntry:[57,25,1], bath:[61,20,1], sink:[65,17,1]
+ },
+ edges:[
+  ['lounge','loungeBack'],['loungeBack','mic'],['loungeBack','sofa'],['lounge','loungeBottom'],['loungeBottom','coffeeFront'],['loungeBottom','loungeLeft'],['loungeLeft','lamp'],['tv','lamp'],
+  ['lounge','junction'],['playEntry','kitchenPass'],['kitchenPass','kitchenDoor'],['kitchenDoor','kitchenEntry'],['kitchenEntry','fridge'],['fridge','counterPass'],['counterPass','counter'],
+  ['counter','diningLeft'],['diningLeft','diningFront'],['diningFront','diningRight'],['diningRight','kitchenEntry'],
+  ['junction','hall'],['hall','stairFoot'],['hall','playEntry'],['playEntry','toys'],['toys','playLeft'],
+  ['playLeft','playFront'],['playFront','playRight'],['playRight','entryPass'],['entryPass','entrance'],
+  ['entryPass','stairFoot'],['playEntry','stairFoot'],
+  ['stairFoot','stairLow'],['stairLow','stairMid'],['stairMid','stairHigh'],['stairHigh','landing'],
+  ['landing','workFront'],['workFront','workLeft'],['workLeft','desk'],['desk','shelf'],
+  ['landing','dressEntry'],['dressEntry','mirror'],['mirror','wardrobe'],
+  ['workLeft','upperHall'],['upperHall','balconyEntry'],['balconyEntry','balcony'],
+  ['upperHall','corridor3'],['corridor3','corridor2'],['corridor2','corridor1'],
+  ['corridor1','door1'],['door1','room1'],['room1','bed1'],
+  ['corridor2','door2'],['door2','room2'],['room2','bed2'],
+  ['corridor3','door3'],['door3','room3'],['room3','bed3'],
+  ['upperHall','bathEntry'],['bathEntry','bath'],['bath','sink']
+ ],
+ // Walkable patches supplement narrow corridor lanes. No free movement across furniture.
+ floors:[
+  {floor:0,poly:[[38,63],[44,60],[51,65],[46,70]]},
+  {floor:0,poly:[[48,62],[55,60],[61,64],[55,66]]},
+  {floor:0,poly:[[57,74],[64,72],[67,75],[62,81]]},
+  {floor:0,poly:[[62,82],[68,79],[78,82],[71,86]]},
+  {floor:0,poly:[[28,82],[31,80],[35,82],[33,87]]},
+  {floor:0,poly:[[45,80],[50,79],[52,83],[46,87]]},
+  {floor:1,poly:[[65,34],[71,31],[76,37],[70,41]]},
+  {floor:1,poly:[[81,36],[86,33],[91,36],[86,40]]},
+  {floor:1,poly:[[21,38],[24,36],[28,38],[26,41]]},
+  {floor:1,poly:[[34,30],[37,28],[40,30],[37,33]]},
+  {floor:1,poly:[[46,24],[48,22],[51,24],[49,27]]},
+  {floor:1,poly:[[55,24],[59,20],[65,21],[59,26]]}
+ ],
+ furniture:[
+  {id:'fridge',name:'冰箱',node:'fridge',floor:0,kind:'toggle',poly:[[41,66],[44,64.5],[47,66.5],[47,76],[43,78],[41,76]],anchor:78},
+  {id:'tv',name:'电视与游戏机',node:'tv',floor:0,kind:'toggle',poly:[[15,55],[24,51],[25,60],[19,63],[15,61]],anchor:63},
+  {id:'sofa',name:'沙发',node:'sofa',floor:0,kind:'sit',poly:[[28,52],[31,49],[43.5,55.5],[43,62.5],[40.5,63.5],[28,56]],anchor:63.5},
+  {id:'coffee',name:'茶几',node:'coffeeFront',floor:0,kind:'tea',poly:[[25,60],[28,59],[33,61],[34,63],[31,65],[25,63]],anchor:65},
+  {id:'mic',name:'麦克风',node:'mic',floor:0,kind:'sing',poly:[[43,52],[46,52],[46,63],[43,63]],anchor:63},
+  {id:'lamp',name:'客厅落地灯',node:'lamp',floor:0,kind:'light',poly:[[11,56],[15,56],[15,65],[12,65]],anchor:65},
+  {id:'dining',name:'餐桌',node:'diningFront',floor:0,kind:'eat',poly:[[30,78],[39,75.5],[46,80],[39,85],[30,83]],anchor:85},
+  {id:'counter',name:'厨房台面',node:'counter',floor:0,kind:'cook',poly:[[22,68],[38,64],[41,72],[26,80],[22,76]],anchor:80},
+  {id:'toys',name:'玩具篮',node:'toys',floor:0,kind:'play',poly:[[54,71],[58,70],[61,73],[60,77],[55,77]],anchor:77},
+  {id:'playtable',name:'玩乐小圆桌',node:'playFront',floor:0,kind:'play',poly:[[66,73],[72,71],[76,74],[75,78],[69,80],[66,77]],anchor:80},
+  {id:'entry',name:'玄关柜',node:'entrance',floor:0,kind:'tidy',poly:[[78,57],[82,55],[86,58],[85,63],[79,65]],anchor:65},
+  {id:'desk',name:'书桌',node:'desk',floor:1,kind:'read',poly:[[54,24],[61,22],[65,26],[61,31],[55,30]],anchor:31},
+  {id:'shelf',name:'书架',node:'shelf',floor:1,kind:'read',poly:[[64,17],[69,18],[72,22],[71,28],[66,29],[64,24]],anchor:29},
+  {id:'wardrobe',name:'衣柜',node:'wardrobe',floor:1,kind:'toggle',poly:[[76,18],[86,23],[86,33],[78,31],[76,26]],anchor:33},
+  {id:'mirror',name:'梳妆台',node:'mirror',floor:1,kind:'dress',poly:[[85,28],[89,26],[95,33],[93,38],[86,35]],anchor:38},
+  {id:'balcony',name:'阳台座椅',node:'balcony',floor:1,kind:'rest',poly:[[47,35],[50,34],[60,40],[59,44],[53,43],[47,39]],anchor:44},
+  {id:'sink',name:'洗手台',node:'sink',floor:1,kind:'wash',poly:[[64,8],[67,9],[68,13],[67,16],[63,14]],anchor:16},
+  {id:'shower',name:'淋浴间',node:'bath',floor:1,kind:'wash',poly:[[54,3],[60,4],[60,12],[56,14],[53,11]],anchor:14},
+  {id:'toilet',name:'马桶',node:'bath',floor:1,kind:'wash',poly:[[50,9],[54,10],[54,15],[52,16],[49,13]],anchor:16},
+  {id:'bed1',name:'蕊蕊的床',node:'bed1',floor:1,kind:'sleep',owner:'ruirui',poly:[[13,31],[17,30],[24,36],[23,41],[20,43],[13,37]],anchor:43},
+  {id:'bed2',name:'jiojio的床',node:'bed2',floor:1,kind:'sleep',owner:'jiojio',poly:[[27,23],[30,22],[36,28],[36,32],[33,33],[27,28]],anchor:33},
+  {id:'bed3',name:'粪粪的床',node:'bed3',floor:1,kind:'sleep',owner:'fenfen',poly:[[38,16],[42,15],[49,21],[48,25],[45,26],[39,21]],anchor:26}
+ ],
+ occluders:[
+  {id:'upper-front',floor:0,anchor:100,poly:[[3,36],[19,44],[46,28],[46,38],[19,54],[3,44]]},
+  {id:'balcony-front',floor:0,anchor:100,poly:[[44,32],[65,43],[65,48],[44,38]]},
+  {id:'stair-near-wall',floor:0,anchor:100,poly:[[59,59],[62,61],[77,43],[77,48],[62,66],[59,64]]},
+  {id:'bedroom-front',floor:1,anchor:100,poly:[[4,40],[18,49],[48,31],[48,33],[18,51],[4,43]]},
+  {id:'balcony-rail',floor:1,anchor:100,poly:[[45,39],[54,44],[65,39],[65,42],[54,47],[45,42]]},
+  {id:'kitchen-divider',floor:0,anchor:100,poly:[[48,65],[50,66],[50,76],[48,78]]},
+  {id:'entry-front',floor:0,anchor:100,poly:[[78,67],[81,69],[91,63],[91,67],[81,73],[78,71]]}
+ ]
+};
+if(typeof module!=='undefined')module.exports=SCENE;
