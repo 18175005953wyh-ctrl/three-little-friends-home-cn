@@ -13,16 +13,11 @@ function plan(p,i){const h=minutes/60;if(h<7||h>=22)return {node:p.bed,kind:'sle
 function roster(){pets.forEach((p,i)=>{const b=$('#pet-'+p.id);if(!b)return;b.classList.toggle('active',i===selected);b.querySelector('small').textContent=p.state});$('#selectionHint').textContent='已选 '+pets[selected].name+' · 点击可走地面或家具'}
 function select(i){selected=i;talk(pets[i],pets[i].hello);roster()}
 function showSchedule(){$('#schedule').replaceChildren(...pets.map((p,i)=>{const e=document.createElement('p');e.textContent=p.name+' · '+plan(p,i).label;return e}))}
-// Remove only edge-connected backdrop pixels; enclosed furniture and walls remain intact.
-function prepareBackdrop(){
- const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(images.house,0,0,W,H);
- const im=g.getImageData(0,0,W,H),d=im.data,seen=new Uint8Array(W*H),queue=new Int32Array(W*H);let head=0,tail=0;
- const refs=[0,W-1].map(i=>[d[i*4],d[i*4+1],d[i*4+2]]);
- function add(i){if(i<0||i>=W*H||seen[i])return;seen[i]=1;const k=i*4,r=d[k],b=d[k+2],green=d[k+1];if(!refs.some(v=>Math.hypot(r-v[0],green-v[1],b-v[2])<70))return;queue[tail++]=i;}
- for(let x=0;x<W;x++)add(x);for(let y=0;y<H;y++){add(y*W);add(y*W+W-1)}
- while(head<tail){const i=queue[head++];d[i*4+3]=0;if(i%W)add(i-1);if(i%W<W-1)add(i+1);add(i-W);add(i+W)}
- g.putImageData(im,0,0);images.houseCutout=c;
-}
+// Keep startup light enough for iOS and WeChat. The previous per-pixel cutout
+// scanned the entire scene before first paint, which could leave lower-power
+// phones on the loading screen. The prepared illustration already supplies the
+// outdoor edge, so draw it directly.
+function prepareBackdrop(){images.houseCutout=images.house}
 function updateSky(){
  const h=minutes/60,day=h>=6&&h<18.5,dusk=h>=17&&h<19,dawn=h>=5&&h<7;
  const top=dusk?'#d8999f':dawn?'#b9bed9':day?'#a9d8ec':'#263852';
